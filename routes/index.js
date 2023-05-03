@@ -25,7 +25,7 @@ module.exports = router;
 const express = require('express')
 const { Pool } = require('pg');
 const dotenv = require('dotenv').config();
-const fetch = require('node-fetch');
+//const fetch = require('node-fetch');
 var bodyParser = require('body-parser');
 
 
@@ -34,7 +34,8 @@ var bodyParser = require('body-parser');
 // Create Express App
 const app = express();
 const router = express.Router();
-const port = 3000;
+const port = process.env.PORT || 3000;
+
 
 router.get('/', (req, res) => {
     const host = 'api.frankfurter.app';
@@ -49,6 +50,72 @@ router.get('/', (req, res) => {
         res.status(500).send('Internal Server Error');
       });
   });
+
+  //********************************************************************************** Oauth code *
+/*
+  const { OAuth2Client } = require('google-auth-library');
+
+  const GOOGLE_CLIENT_ID = '926886034716-64kcpsf3jfpin9sor1m50jvd34f1uivd.apps.googleusercontent.com';
+  const GOOGLE_CLIENT_SECRET = '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';
+  const GOOGLE_REDIRECT_URI = 'http://localhost:3000/oauth/google/callback';
+
+
+// Create a new OAuth2Client instance with your client ID and secret
+const oAuth2Client = new OAuth2Client(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI);
+
+// Handle the Google OAuth callback
+app.get('/oauth/google/callback', async (req, res) => {
+  try {
+    const { code } = req.query;
+
+    // Exchange the code for an access token
+    const { tokens } = await oAuth2Client.getToken(code);
+
+    // Use the access token to fetch user data
+    const { data } = await oAuth2Client.request({ url: 'https://www.googleapis.com/oauth2/v2/userinfo' });
+
+    // Save the user's information in your database or session
+    req.session.user = data;
+
+    res.redirect('/');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('An error occurred while authenticating with Google');
+  }
+});
+
+// Handle the initial request to start the Google OAuth flow
+app.get('/oauth/google', (req, res) => {
+  // Generate a URL that the user can click to start the OAuth flow
+  const url = oAuth2Client.generateAuthUrl({
+    access_type: 'offline',
+    scope: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile'],
+  });
+
+  res.redirect(url);
+});
+*/
+const { auth } = require('express-openid-connect');
+
+const config = {
+  authRequired: false,
+  auth0Logout: true,
+  secret: 'ETn4_s86AsWI6IxNtt0bJHnpo-hWQSXcl5eTx9-MlAqBNL7ImxuXpHsDqw1ETwhm',
+  baseURL: 'https://localhost:3000',
+  clientID: 'lwpgRukI5DsBtpTKJWIuwKxYuta82TGL',
+  issuerBaseURL: 'dev-r523a870fgpetj4d.us.auth0.com'
+};
+
+// auth router attaches /login, /logout, and /callback routes to the baseURL
+app.use(auth(config));
+
+// req.isAuthenticated is provided from the auth router
+app.get('/', (req, res) => {
+  res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+});
+
+
+  //************************************************************************ */
 
 
 //Create Postgres Pool
