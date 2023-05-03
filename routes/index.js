@@ -52,7 +52,7 @@ router.get('/', (req, res) => {
   });
 
   //********************************************************************************** Oauth code *
-/*
+
   const { OAuth2Client } = require('google-auth-library');
 
   const GOOGLE_CLIENT_ID = '926886034716-64kcpsf3jfpin9sor1m50jvd34f1uivd.apps.googleusercontent.com';
@@ -94,7 +94,7 @@ app.get('/oauth/google', (req, res) => {
 
   res.redirect(url);
 });
-*/
+/*
 const { auth } = require('express-openid-connect');
 
 const config = {
@@ -113,7 +113,7 @@ app.use(auth(config));
 app.get('/', (req, res) => {
   res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
 });
-
+/*
 
   //************************************************************************ */
 
